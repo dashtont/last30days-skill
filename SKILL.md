@@ -1221,30 +1221,33 @@ CITATION RULE: Cite sources sparingly to prove research is real.
 - Do NOT include engagement metrics in citations (likes, upvotes) - save those for stats box
 - Do NOT chain multiple citations: "per @x, @y, @z" is too much. Pick the strongest one.
 
-CITATION PRIORITY (most to least preferred):
-1. @handles from X - "per @handle" (these prove the tool's unique value)
-2. r/subreddits from Reddit - "per r/subreddit" (when citing Reddit, YouTube, or TikTok, prefer quoting top comments over just the thread title)
-3. YouTube channels - "per [channel name] on YouTube" (transcript-backed insights)
-4. TikTok creators - "per @creator on TikTok" (viral/trending signal)
-5. Instagram creators - "per @creator on Instagram" (influencer/creator signal)
-6. HN discussions - "per HN" or "per hn/username" (developer community signal)
-7. Polymarket - "Polymarket has X at Y% (up/down Z%)" with specific odds and movement
-8. Web sources - ONLY when Reddit/X/YouTube/TikTok/Instagram/HN/Polymarket don't cover that specific fact
+CITATION PRIORITY (most to least preferred). Every cited name is an inline markdown link `[name](url)` — URL pulled from the raw research dump, plain text only if the raw data has no URL for that specific source:
+1. @handles from X - `per [@handle](https://x.com/handle)` (these prove the tool's unique value)
+2. r/subreddits from Reddit - `per [r/subreddit](https://reddit.com/r/subreddit)` (when citing Reddit, YouTube, or TikTok, prefer quoting top comments over just the thread title)
+3. YouTube channels - `per [channel name](https://youtube.com/@channel) on YouTube` (transcript-backed insights)
+4. TikTok creators - `per [@creator](https://tiktok.com/@creator) on TikTok` (viral/trending signal)
+5. Instagram creators - `per [@creator](https://instagram.com/creator) on Instagram` (influencer/creator signal)
+6. HN discussions - `per [HN](https://news.ycombinator.com/item?id=N)` or `per [hn/username](https://news.ycombinator.com/user?id=username)` (developer community signal)
+7. Polymarket - `[Polymarket](https://polymarket.com/event/...) has X at Y% (up/down Z%)` with specific odds and movement
+8. Web sources - ONLY when Reddit/X/YouTube/TikTok/Instagram/HN/Polymarket don't cover that specific fact; link the publication: `per [Rolling Stone](https://rollingstone.com/...)`
 
 The tool's value is surfacing what PEOPLE are saying, not what journalists wrote.
 When both a web article and an X post cover the same fact, cite the X post.
 
-URL FORMATTING: NEVER paste raw URLs anywhere in the output - not in synthesis, not in stats, not in sources.
-- **BAD:** "per https://www.rollingstone.com/music/music-news/kanye-west-bully-1235506094/"
-- **GOOD:** "per Rolling Stone"
-- **BAD stats line:** `🌐 Web: 10 pages - https://later.com/blog/..., https://buffer.com/...`
-- **GOOD stats line:** `🌐 Web: 10 pages - Later, Buffer, CNN, SocialBee`
-Use the publication/site name, not the URL. The user doesn't need links - they need clean, readable text.
+URL FORMATTING: every citation in the narrative body is an inline markdown link `[name](url)`. NEVER paste a raw URL string — the URL is always hidden inside the link. Claude Code renders `[text](url)` as blue CMD-clickable text (URL hidden, only the link text visible). If the raw research has no URL for a specific source, fall back to plain text for that one citation. Never emit a broken empty link like `[Rolling Stone]()`.
+
+- **BAD (raw URL):** "per https://www.rollingstone.com/music/music-news/kanye-west-bully-1235506094/"
+- **BAD (plain name when URL is available):** "per Rolling Stone"
+- **BAD (broken empty link):** "per [Rolling Stone]()"
+- **GOOD:** "per [Rolling Stone](https://www.rollingstone.com/music/music-news/kanye-west-bully-1235506094/)"
+- **FALLBACK (URL genuinely missing):** "per Rolling Stone"
+
+The stats footer (🌐 Web line and everywhere else) is engine-emitted per LAW 5. Do NOT format its links yourself — copy the bytes verbatim.
 
 **BAD:** "His album is set for March 20 (per Rolling Stone; Billboard; Complex)."
-**GOOD:** "His album BULLY drops March 20 - fans on X are split on the tracklist, per @honest30bgfan_"
-**GOOD:** "Ye's apology got massive traction on r/hiphopheads"
-**OK** (web, only when Reddit/X don't have it): "The Hellwatt Festival runs July 4-18 at RCF Arena, per Billboard"
+**GOOD:** "His album BULLY drops March 20 - fans on X are split on the tracklist, per [@honest30bgfan_](https://x.com/honest30bgfan_)"
+**GOOD:** "Ye's apology got massive traction on [r/hiphopheads](https://reddit.com/r/hiphopheads)"
+**OK** (web, only when Reddit/X don't have it): "The Hellwatt Festival runs July 4-18 at RCF Arena, per [Billboard](https://www.billboard.com/music/music-news/hellwatt-festival-2026-lineup-...)"
 
 **Lead with people, not publications.** Start each topic with what Reddit/X
 users are saying/feeling, then add web context only if needed. The user came
@@ -1263,17 +1266,19 @@ here for the conversation, not the press release.
 
 What I learned:
 
-**{Headline summarizing topic 1}** - [1-2 sentences about what people are saying, per @handle or r/sub]
+**{Headline summarizing topic 1}** - [1-2 sentences about what people are saying, per [@handle](https://x.com/handle) or [r/sub](https://reddit.com/r/sub)]
 
-**{Headline summarizing topic 2}** - [1-2 sentences, per @handle or r/sub]
+**{Headline summarizing topic 2}** - [1-2 sentences, per [@handle](https://x.com/handle) or [r/sub](https://reddit.com/r/sub)]
 
-**{Headline summarizing topic 3}** - [1-2 sentences, per @handle or r/sub]
+**{Headline summarizing topic 3}** - [1-2 sentences, per [@handle](https://x.com/handle) or [r/sub](https://reddit.com/r/sub)]
 
 KEY PATTERNS from the research:
-1. [Pattern] - per @handle
-2. [Pattern] - per r/sub
-3. [Pattern] - per @handle
+1. [Pattern] - per [@handle](https://x.com/handle)
+2. [Pattern] - per [r/sub](https://reddit.com/r/sub)
+3. [Pattern] - per [@handle](https://x.com/handle)
 ```
+
+At render time the `@handle`, `r/sub`, and publication-name placeholders become markdown links wrapping the actual handle/sub/name, with the URL pulled from the raw research dump. Fall back to plain text only when the raw data has no URL for a specific source.
 
 Headlines should be specific and newsy ("BULLY dropped and it's dominating", "Europe is banning him one country at a time"), not generic ("Album release", "Tour updates").
 
