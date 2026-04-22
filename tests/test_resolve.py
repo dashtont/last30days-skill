@@ -109,6 +109,24 @@ class TestBuildContextSummary(unittest.TestCase):
         self.assertEqual(resolve._build_context_summary(items), "")
 
 
+class TestCanonicalizeGithubRepos(unittest.TestCase):
+    def test_rewrites_integration_repo_to_canonical_product(self):
+        repos = ["openai/codex", "anthropics/claude-code-action"]
+        result = resolve.canonicalize_github_repos("claude code vs codex", repos, cap=None)
+        self.assertEqual(result, ["openai/codex", "anthropics/claude-code"])
+
+    def test_preserves_action_repo_when_topic_intends_action(self):
+        repos = ["anthropics/claude-code-action", "openai/codex"]
+        result = resolve.canonicalize_github_repos("claude code action setup", repos, cap=None)
+        self.assertIn("anthropics/claude-code-action", result)
+        self.assertNotIn("anthropics/claude-code", result)
+
+    def test_dedupes_case_insensitive_after_canonicalization(self):
+        repos = ["Anthropics/Claude-Code-Action", "anthropics/claude-code"]
+        result = resolve.canonicalize_github_repos("claude code", repos, cap=None)
+        self.assertEqual(result, ["Anthropics/Claude-Code"])
+
+
 class TestAutoResolve(unittest.TestCase):
     def test_no_backend_returns_empty(self):
         result = resolve.auto_resolve("test topic", {})

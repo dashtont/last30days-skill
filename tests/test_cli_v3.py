@@ -260,6 +260,44 @@ class CliV3Tests(unittest.TestCase):
         fake_progress.show_promo.assert_called_once_with("both", diag=diag)
         self.assertIn("# rendered", stdout.getvalue())
 
+    def test_main_canonicalizes_explicit_github_repo_flags(self):
+        report = self.make_report()
+        diag = {
+            "available_sources": ["grounding"],
+            "providers": {"google": True, "openai": False, "xai": False},
+            "x_backend": None,
+            "bird_installed": True,
+            "bird_authenticated": False,
+            "bird_username": None,
+            "native_web_backend": "brave",
+        }
+        with mock.patch.object(cli.env, "get_config", return_value={}), \
+             mock.patch.object(cli.pipeline, "diagnose", return_value=diag), \
+             mock.patch.object(cli.pipeline, "run", return_value=report) as run_mock, \
+             mock.patch.object(cli, "emit_output", return_value="# rendered"), \
+             mock.patch.object(sys, "argv", [
+                 "last30days.py",
+                 "claude",
+                 "code",
+                 "vs",
+                 "codex",
+                 "--github-repo",
+                 "openai/codex,anthropics/claude-code-action",
+             ]):
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with redirect_stdout(stdout), redirect_stderr(stderr):
+                rc = cli.main()
+        self.assertEqual(0, rc)
+        # In vs-mode the main_runner is the first pipeline.run call; sub-runs
+        # for competitor entities follow with their own per-entity github_repos.
+        kwargs = run_mock.call_args_list[0].kwargs
+        self.assertEqual(
+            ["openai/codex", "anthropics/claude-code"],
+            kwargs["github_repos"],
+        )
+        self.assertIn("[GitHub] Canonicalized repos:", stderr.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()

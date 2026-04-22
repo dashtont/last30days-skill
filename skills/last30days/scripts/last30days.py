@@ -651,6 +651,16 @@ def main() -> int:
         github_user = args.github_user.lstrip("@").lower() if args.github_user else None
         github_repos = [r.strip() for r in args.github_repo.split(",") if r.strip() and "/" in r.strip()] if args.github_repo else None
 
+        if github_repos:
+            from lib import resolve as resolve_lib
+            original_github_repos = github_repos[:]
+            github_repos = resolve_lib.canonicalize_github_repos(topic, github_repos, cap=None)
+            if github_repos != original_github_repos:
+                sys.stderr.write(
+                    "[GitHub] Canonicalized repos: "
+                    f"{','.join(original_github_repos)} -> {','.join(github_repos)}\n"
+                )
+
         # --deep-research: auto-enable perplexity source and set deep flag
         if args.deep_research:
             if not config.get("OPENROUTER_API_KEY"):
