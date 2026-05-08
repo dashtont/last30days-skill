@@ -33,8 +33,11 @@ load_env_vars() {
       [[ -z "$key" ]] && continue
       key=$(echo "$key" | xargs)
       value=$(echo "$value" | xargs | sed 's/^["'\''"]//;s/["'\''"]$//')
+      # Strip inline comments (# preceded by whitespace) to prevent
+      # command substitution in backtick-containing comments
+      value="${value%%[[:space:]]#*}"
       if [[ -n "$key" && -n "$value" ]]; then
-        eval "ENV_${key}=\"${value}\""
+        declare "ENV_${key}=${value}"
       fi
     done < "$file"
   fi
