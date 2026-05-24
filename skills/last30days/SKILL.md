@@ -1,12 +1,12 @@
 ---
-name: last30days
-version: "3.3.0"
-description: "Research what people actually say about any topic in the last 30 days. Pulls posts and engagement from Reddit, X, YouTube, TikTok, Hacker News, Polymarket, GitHub, and the web."
-argument-hint: 'last30days nvidia earnings reaction | last30days AI video tools | last30days what users want in react'
+name: last30days-cxd
+version: "3.3.0-cxd.1"
+description: "CxD fork of last30days. Researches a topic across Reddit, X, YouTube, TikTok, Hacker News, Polymarket, GitHub, and the web. Writes a 2-3 paragraph synopsis plus bullet-point breakdown to ~/01.Business.CxD/Research/Last30days/ and shows only the saved file path in chat."
+argument-hint: 'last30days-cxd nvidia earnings reaction | last30days-cxd AI video tools | last30days-cxd what users want in react'
 allowed-tools: Bash, Read, Write, AskUserQuestion, WebSearch
-homepage: https://github.com/mvanhorn/last30days-skill
-repository: https://github.com/mvanhorn/last30days-skill
-author: mvanhorn
+homepage: https://github.com/dashtont/last30days-skill
+repository: https://github.com/dashtont/last30days-skill
+author: dashtont
 license: MIT
 user-invocable: true
 metadata:
@@ -60,32 +60,119 @@ metadata:
       - clawhub
 ---
 
-# STEP 0: STALE-CLONE SELF-CHECK — RUN BEFORE READING BELOW
+# STEP -1: CXD FORK OUTPUT OVERRIDE — READ FIRST, OVERRIDES EVERY OUTPUT RULE BELOW
 
-Before reading anything else in this file, check whether you loaded SKILL.md from the one known stale-clone location: Claude Code's marketplaces directory.
+This is the `last30days-cxd` fork. It uses the same Python engine, same Step 0.45 / Step 0.5 / Step 0.55 / Step 0.75 pre-flight resolution, same LAWs for what GOES INTO the synthesis — BUT the final destination of the synthesis is a FILE, not chat.
 
-**Run this check:**
+**Upstream behavior:** the model emits the synthesis (badge, `What I learned:` prose, KEY PATTERNS, engine footer, invitation) to chat. The user reads it in the conversation.
 
-```bash
-CLAUDE_CACHE_LATEST=$(find "$HOME/.claude/plugins/cache/last30days-skill/last30days" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort -V | tail -1)
-# Two cache layouts ship in the wild — nested ({version}/skills/last30days/SKILL.md)
-# and flat ({version}/SKILL.md). Resolve to whichever shape actually exists.
-CLAUDE_CACHE_SKILL_MD=""
-if [ -n "$CLAUDE_CACHE_LATEST" ]; then
-  if [ -f "$CLAUDE_CACHE_LATEST/skills/last30days/SKILL.md" ]; then
-    CLAUDE_CACHE_SKILL_MD="$CLAUDE_CACHE_LATEST/skills/last30days/SKILL.md"
-  elif [ -f "$CLAUDE_CACHE_LATEST/SKILL.md" ]; then
-    CLAUDE_CACHE_SKILL_MD="$CLAUDE_CACHE_LATEST/SKILL.md"
-  fi
-fi
-echo "CLAUDE_CACHE_SKILL_MD=$CLAUDE_CACHE_SKILL_MD"
+**CxD fork behavior:** the model writes the synthesis to a file under `/Users/davidtaylor/01.Business.CxD/Research/Last30days/` and emits ONLY a one-line confirmation to chat. Dave opens the file to read the briefing.
+
+## What this overrides
+
+| Upstream rule | CxD fork behavior |
+|---|---|
+| Chat output = full synthesis | Chat output = one line: `✅ Saved → {full path}` |
+| LAW 5 footer pass-through to chat | Footer pass-through into the FILE, not chat |
+| LAW 1 (no trailing Sources block) in chat | Applies to FILE content |
+| LAW 2 (no invented title) | File STARTS with `# Last 30 days: {TOPIC}` as the H1 — that's the file title, not a violation |
+| LAW 4 (no `##` headers in body) | Replaced — the file USES `##` headers to organise the bullet sections |
+| Badge as first line of output | Skipped — the file has its own H1 title instead |
+| "What I learned:" prose paragraphs | Replaced — file uses a 2-3 paragraph SYNOPSIS plus bullet sections (see File Format below) |
+| KEY PATTERNS numbered list | In file, as bullets under `## Key patterns` |
+
+The LAWs that GOVERN THE WRITING STILL APPLY: no em-dashes / en-dashes (LAW 3 — use ` - ` instead), no raw evidence-cluster dumps (LAW 6), use `--plan` on named-entity topics (LAW 7), every cited source is an inline markdown link `[name](url)` (LAW 8). These now apply to the FILE content, not chat.
+
+## File format (write THIS to disk via the Write tool)
+
+```
+# Last 30 days: {TOPIC}
+_Generated {YYYY-MM-DD} · sources: {comma-separated active sources}_
+
+## Synopsis
+
+{Paragraph 1 — the headline. What is going on with this topic right now, in plain English. 3-5 sentences. Lead with the single most important thing a busy reader needs to know.}
+
+{Paragraph 2 — the texture. What people are actually saying, where the conversation is happening, what is changing. 3-5 sentences. Name specific communities, creators, or stories with inline [name](url) links.}
+
+{Paragraph 3 (optional, only if needed) — what to watch. Anything brewing, contested, or about to break. 2-4 sentences. Drop this paragraph if paragraphs 1-2 already cover it.}
+
+## Key patterns
+
+- **{Pattern 1, 4-8 words}** - one-sentence explanation with an inline citation [source](url).
+- **{Pattern 2}** - same shape.
+- **{Pattern 3-5}** - same shape. Aim for 3-5 bullets, never more than 7.
+
+## Where to follow up
+
+- [Source title 1](url) - one phrase on why it is worth opening.
+- [Source title 2](url) - same.
+- [Source title 3](url) - same.
+- ... 8-12 of the strongest items from the raw evidence, ranked by signal. Mix sources (Reddit, X, YouTube, articles, GitHub).
+
+## Stats
+
+{The engine's ✅ All agents reported back! emoji-tree footer block VERBATIM, between its --- separators. Pass-through, do not reformat. Per LAW 5, just rendered into the file instead of chat.}
+
+## Raw research
+
+_Full raw evidence dump (ranked clusters, all source coverage, WebSearch supplemental appendix) lives at the engine's auto-saved raw file in this same folder: see `{topic-slug}-raw-v3.md` alongside this file._
 ```
 
-If the SKILL.md path you just Read contains `/.claude/plugins/marketplaces/` AND `$CLAUDE_CACHE_SKILL_MD` is non-empty, STOP and re-read `$CLAUDE_CACHE_SKILL_MD` before proceeding. Otherwise the SKILL.md you have is fine — continue.
+Rules for the file body:
+- Use ` - ` (hyphen with spaces) instead of `—` / `–` per LAW 3.
+- Every cited @handle / r/subreddit / publication / channel / market is wrapped as `[name](url)` per LAW 8. Plain text only when the raw data has no URL.
+- No "It's not about X, it's about Y" framing. No "The catch?" / "The kicker?" transitions. No corporate -ing verbs ("highlighting", "facilitating"). No symbolic-meaning claims. Plain language, like a person talking to another person. (CxD writing-style rules.)
 
-**Why this specific check:** `~/.claude/plugins/marketplaces/last30days-skill/` is a git clone Claude Code auto-restores to `origin/main` on session start. It can lag the versioned cache by one or more releases. Three 2026-04-22 test runs (Linear, Coinbase) loaded SKILL.md from `marketplaces/`, ran `--help` from the same stale path, did not see the `--competitors` flag that existed in the cache, and fell back to a manual comparison plan. Result: 2 of 3 windows never invoked the feature they were asked to test. STEP 0 defends against that one Claude Code-specific bug.
+## How to invoke
 
-**Other install paths are fine:** `~/.codex/skills/`, `~/.agents/skills/`, an `npx skills add` install dir, or a repo checkout are all valid load points - the resolver in Step 1 picks them up. Do NOT abort or hop on those paths.
+1. Run Step 0.45 → Step 0.5 → Step 0.55 → Step 0.75 → engine exactly as documented in the rest of this file. When you build the engine Bash command, ALWAYS pass `--save-dir="/Users/davidtaylor/01.Business.CxD/Research/Last30days"` explicitly. Do not rely on the `LAST30DAYS_MEMORY_DIR` env var — the CxD fork hardcodes the CxD Research folder so the engine's raw dump lands in the right place regardless of shell environment.
+2. Take the engine's stdout (badge, evidence clusters, footer).
+3. Synthesize per the LAWs (no em-dashes, inline links, no evidence dumps, etc.).
+4. Reformat into the File Format above (synopsis paragraphs + bullets, NOT the upstream "What I learned:" prose shape).
+5. Use the **Write** tool to save at:
+   ```
+   /Users/davidtaylor/01.Business.CxD/Research/Last30days/{topic-slug}-{YYYY-MM-DD}.md
+   ```
+   - `{topic-slug}` = kebab-case lowercase, max 60 chars (strip punctuation, replace spaces with `-`).
+   - `{YYYY-MM-DD}` = today.
+   - If a file with that name already exists, append `-2`, `-3`, etc.
+6. Emit to chat EXACTLY this single line:
+   ```
+   ✅ Saved → /Users/davidtaylor/01.Business.CxD/Research/Last30days/{topic-slug}-{YYYY-MM-DD}.md
+   ```
+   One line. No badge. No preamble. No synthesis. No "Here's what I found." No follow-up invitation. The chat output is the file-path confirmation, and that is the entire chat output.
+
+## What NOT to do in this fork
+
+- Do NOT emit the badge, `What I learned:`, KEY PATTERNS, footer, or any synthesis content to chat. All of that goes into the file.
+- Do NOT add "Here's a quick summary while you open the file" - chat stays clean.
+- Do NOT add a "Want me to dig deeper into X?" invitation after the saved-confirmation line.
+- Do NOT save to `~/Documents/Last30Days` or `~/Desktop/Research/Last30days` (the upstream defaults). The CxD fork always uses `/Users/davidtaylor/01.Business.CxD/Research/Last30days/` — pass that path to the engine via `--save-dir` and to the Write tool for the synthesis file. Do not rely on the `LAST30DAYS_MEMORY_DIR` env var.
+- Do NOT include the topic slug for the SYNTHESIS file with `-raw` in the name (that suffix belongs to the engine's own raw dump).
+
+---
+
+# STEP 0: STALE-CLONE SELF-CHECK (CxD fork variant)
+
+Run this check before reading further:
+
+```bash
+CXD_CACHE_LATEST=$(find "$HOME/.claude/plugins/cache/last30days-cxd-marketplace/last30days-cxd" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort -V | tail -1)
+CXD_CACHE_SKILL_MD=""
+if [ -n "$CXD_CACHE_LATEST" ]; then
+  if [ -f "$CXD_CACHE_LATEST/skills/last30days/SKILL.md" ]; then
+    CXD_CACHE_SKILL_MD="$CXD_CACHE_LATEST/skills/last30days/SKILL.md"
+  elif [ -f "$CXD_CACHE_LATEST/SKILL.md" ]; then
+    CXD_CACHE_SKILL_MD="$CXD_CACHE_LATEST/SKILL.md"
+  fi
+fi
+echo "CXD_CACHE_SKILL_MD=$CXD_CACHE_SKILL_MD"
+```
+
+If the SKILL.md path you just Read contains `/.claude/plugins/marketplaces/last30days-cxd-marketplace/` AND `$CXD_CACHE_SKILL_MD` is non-empty, STOP and re-read `$CXD_CACHE_SKILL_MD` before proceeding. Otherwise continue.
+
+Same defense as upstream's STEP 0 but pointed at the CxD fork's cache location. The development repo at `~/03.Projects/Last30daysSkill/` is a valid load point too (used when iterating on the fork itself); do NOT abort on that path.
 
 ---
 

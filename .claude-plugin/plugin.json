@@ -1,14 +1,14 @@
 {
-  "name": "last30days",
-  "version": "3.3.0",
-  "description": "Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent scores by upvotes, likes, and real money - not editors.",
+  "name": "last30days-cxd",
+  "version": "3.3.0-cxd.1",
+  "description": "CxD fork of last30days. Researches any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. Writes a 2-3 paragraph synopsis plus bullet-point breakdown to ~/01.Business.CxD/Research/Last30days/; chat shows only the saved file path.",
   "author": {
-    "name": "Matt Van Horn",
-    "email": "mvanhorn@gmail.com",
-    "url": "https://github.com/mvanhorn"
+    "name": "David Taylor",
+    "email": "hello@changebydesign.com",
+    "url": "https://github.com/dashtont"
   },
-  "homepage": "https://github.com/mvanhorn/last30days-skill",
-  "repository": "https://github.com/mvanhorn/last30days-skill",
+  "homepage": "https://github.com/dashtont/last30days-skill",
+  "repository": "https://github.com/dashtont/last30days-skill",
   "license": "MIT",
-  "keywords": ["research", "reddit", "twitter", "youtube", "tiktok", "instagram", "trends", "prompts", "polymarket", "github", "perplexity", "threads", "pinterest", "eli5", "hacker-news"]
+  "keywords": ["research", "reddit", "twitter", "youtube", "tiktok", "instagram", "trends", "prompts", "polymarket", "github", "perplexity", "threads", "pinterest", "eli5", "hacker-news", "cxd"]
 }

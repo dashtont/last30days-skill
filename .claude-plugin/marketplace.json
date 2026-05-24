@@ -1,24 +1,24 @@
 {
-  "name": "last30days-skill",
+  "name": "last30days-cxd-marketplace",
   "owner": {
-    "name": "Matt Van Horn",
-    "url": "https://github.com/mvanhorn"
+    "name": "David Taylor (CxD)",
+    "url": "https://github.com/dashtont"
   },
   "metadata": {
-    "description": "Marketplace hosting the Last 30 Days research plugin."
+    "description": "CxD fork of the Last 30 Days research plugin."
   },
   "plugins": [
     {
-      "name": "last30days",
-      "description": "Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent scores by upvotes, likes, and real money - not editors.",
-      "version": "3.3.0",
+      "name": "last30days-cxd",
+      "description": "CxD fork of last30days. Writes a reader-friendly 2-3 paragraph synopsis plus bullet-point breakdown to ~/01.Business.CxD/Research/Last30days/ and shows only the saved file path in chat.",
+      "version": "3.3.0-cxd.1",
       "author": {
-        "name": "Matt Van Horn",
-        "url": "https://github.com/mvanhorn"
+        "name": "David Taylor (CxD)",
+        "url": "https://github.com/dashtont"
       },
       "source": "./",
       "category": "productivity",
-      "homepage": "https://github.com/mvanhorn/last30days-skill"
+      "homepage": "https://github.com/dashtont/last30days-skill"
     }
   ]
 }
